@@ -1,0 +1,47 @@
+{% include 'header.html' %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Form Pembelian</h1>
+          </div>
+          <!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="card-body">
+      <label>Date and time range:</label>
+      <!-- Date and time range -->
+      <div class="input-group">
+         <div class="input-group-prepend">
+           <span class="input-group-text"><i class="far fa-clock"></i></span>
+         </div>
+         <input type="text" name="From" id="From" class="form-control float-right">
+      </div>
+      <br/>
+      <div class="col-md">
+        Cek input tanggal: <span id="result"></span>
+      </div>
+      <input type="button" name="range" id="range" value="Range" class="btn btn-success" onClick="pr()"/>
+      <!-- /.input group -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <!-- /.card-body -->
+</div>
+<!-- /.content-wrapper -->
+
+<script>
+  function pr() {
+    console.log('tes');
+    document.getElementById("result").innerHTML = document.getElementById('From').value + " "
+  }
+</script>
+
+{% include 'footer.html' %} 

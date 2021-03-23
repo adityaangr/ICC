@@ -1,0 +1,86 @@
+{% include 'header.html' %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+   <!-- Content Header (Page header) -->
+   <div class="content-header">
+      <div class="container-fluid">
+         <div class="row mb-2">
+            <div class="col-sm-6">
+               <h1 class="m-0 text-dark">Data Cek</h1>
+            </div>
+            <!-- /.col -->
+         </div>
+         <!-- /.row -->
+         <!-- /.content-header -->
+         <!-- Main content -->
+         <section class="content">
+            <div class="row">
+               <div class="col-12">
+                  <!-- datepicker-->
+                  <div class="card card-primary">
+                     <div class="card-header">
+                        <h3 class="card-title">Date picker</h3>
+                     </div>
+                     <div class="card-body">
+                        <label>Date and time range:</label>
+                        <!-- Date and time range -->
+                        <div class="input-group">
+                           <div class="input-group-prepend">
+                             <span class="input-group-text"><i class="far fa-clock"></i></span>
+                           </div>
+                           <input type="text" name="From" id="From" class="form-control float-right">
+                           <!-- <input type="date" name='tgl1'>
+                           <input type="date" name='tgl2'> -->
+                         </div>
+                         <br/>
+                         <div class="col-md">
+                           Cek input tanggal: <span id="result"></span>
+                           <script>
+                              function pr() {
+                                document.getElementById("result").innerHTML = document.getElementById('From').value + " "
+                              }
+                            </script>
+                              </div>
+                         <input type="button" name="range" id="range" value="Range" class="btn btn-success" onClick="pr()"/>
+                           <!-- /.input group -->
+                        </div>
+                     <!-- /.form group -->
+                     <!-- Date and time range -->
+                  </div>
+                  <!-- /.card-body -->
+               </div>
+            </div>
+         </section>
+         <!-- /.card-body -->
+         <!-- datepicker-->
+         <!-- MULAI SINI DATA TABLE -->
+         <!-- /.card -->
+                 <!-- BAR CHART -->
+                 <div class="card card-success">
+                  <div class="card-header">
+                    <h3 class="card-title">Bar Chart</h3>
+    
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart">
+                      <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+         <!-- /.card -->
+      </div>
+      <!-- /.col -->
+   </div>
+   <!-- /.row -->
+   </section>
+   <!-- /.content -->
+</div>
+<!-- /.content -->
+<!-- /.content-wrapper -->
+{% include 'footer.html' %}

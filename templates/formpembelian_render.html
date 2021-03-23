@@ -1,0 +1,15 @@
+//templates/response.html
+<table id="myTable1" class="table table-bordered table-striped">
+    <tr>
+        {% for header in colnames %} 
+        <th>{{ header }}</th>
+        {%endfor%} 
+     </tr>
+    {% for rs in ordersrange %}
+    <tr>
+       {% for cell in rs %}
+       <td>{{cell}}</td>
+       {%endfor%}
+    </tr>
+    {%endfor%}
+    </table>

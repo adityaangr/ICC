@@ -1,0 +1,436 @@
+
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 3.0.4
+    </div>
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="{{ url_for('static', filename='plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+$.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- ChartJS -->
+<script src="{{ url_for('static', filename='plugins/chart.js/Chart.min.js') }}"></script>
+<!-- Sparkline -->
+<script src="{{ url_for('static', filename='plugins/sparklines/sparkline.js') }}"></script>
+<!-- JQVMap -->
+<script src="{{ url_for('static', filename='plugins/jqvmap/jquery.vmap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/jqvmap/maps/jquery.vmap.usa.js') }}"></script>
+<!-- jQuery Knob Chart -->
+<script src="{{ url_for('static', filename='plugins/jquery-knob/jquery.knob.min.js') }}"></script>
+<!-- daterangepicker -->
+<script src="{{ url_for('static', filename='plugins/moment/moment.min.js') }}"></script>
+
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="{{ url_for('static', filename='plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+<!-- Summernote -->
+<script src="{{ url_for('static', filename='plugins/summernote/summernote-bs4.min.js') }}"></script>
+<!-- overlayScrollbars -->
+<script src="{{ url_for('static', filename='plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ url_for('static', filename='dist/js/adminlte.js') }}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="{{ url_for('static', filename='dist/js/pages/dashboard.js') }}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ url_for('static', filename='dist/js/demo.js') }}"></script>
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+
+<!-- date-range-picker -->
+<script src="{{ url_for('static', filename='plugins/daterangepicker/daterangepicker.js') }}"></script>
+<!-- Select2 -->
+<script src="{{ url_for('static', filename='plugins/select2/js/select2.full.min.js') }}"></script>
+<!-- InputMask -->
+<script src="{{ url_for('static', filename='plugins/moment/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
+
+
+
+<!-- page script -->
+<!-- <script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+    });
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script> -->
+<!-- <script>
+$(document).ready(function() {
+    $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
+        $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+    } );
+     
+    $('table.table').DataTable( {
+        scrollY:        750,
+        scrollX:        5,
+        scrollCollapse: true,
+    } );
+
+} );
+</script> -->
+<!-- Page script -->
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+
+    //Datemask dd/mm/yyyy
+    $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+    //Money Euro
+    $('[data-mask]').inputmask()
+
+    //Date range picker
+    $('#reservation').daterangepicker()
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({
+      timePicker: false,
+      timePickerIncrement: 15,
+      singleDatePicker:true,
+      locale: {
+        format: 'MM/DD/YYYY hh:mm A'
+      }
+    })
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+      {
+        ranges   : {
+          'Today'       : [moment(), moment()],
+          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate  : moment()
+      },
+      function (start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+      }
+    )
+
+    //Timepicker
+    $('#timepicker').datetimepicker({
+      format: 'LT'
+    })
+    
+    //Bootstrap Duallistbox
+    $('.duallistbox').bootstrapDualListbox()
+
+    //Colorpicker
+    $('.my-colorpicker1').colorpicker()
+    //color picker with addon
+    $('.my-colorpicker2').colorpicker()
+
+    $('.my-colorpicker2').on('colorpickerChange', function(event) {
+      $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+    });
+
+    $("input[data-bootstrap-switch]").each(function(){
+      $(this).bootstrapSwitch('state', $(this).prop('checked'));
+    });
+
+  })
+  </script>
+
+
+<script type="text/javascript">
+  var startDate;
+  var endDate;
+  
+  $(document).ready(function() {
+      $('#From').daterangepicker(
+         {
+            startDate: moment().subtract('days', 29),
+            endDate: moment(),
+            dateLimit: { days: 60 },
+            showDropdowns: true,
+            showWeekNumbers: true,
+            timePicker: false,
+            timePickerIncrement: 1,
+            timePicker12Hour: true,
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+               'Last 7 Days': [moment().subtract('days', 6), moment()],
+               'Last 30 Days': [moment().subtract('days', 29), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+            },
+            opens: 'left',
+            buttonClasses: ['btn btn-default'],
+            applyClass: 'btn-small btn-primary',
+            cancelClass: 'btn-small',
+            format: 'DD/MM/YYYY',
+            separator: ' to ',
+            locale: {
+                applyLabel: 'Submit',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom Range',
+                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                firstDay: 1
+            }
+         },
+         function(start, end) {
+          console.log("Callback has been called!");
+          $('#From span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
+          startDate = start;
+           endDate = end;    
+  
+         }
+      );
+      //Set the initial state of the picker label
+      $('#From span').html(moment().subtract('days', 29).format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+  
+      $('#range').click(function(){
+          var From = startDate.format('YYYY-MM-DD');
+          var to = endDate.format('YYYY-MM-DD');
+          console.log(From + ' - ' + to);
+          if(From != '' && to != '')
+          {
+              $.ajax({
+                  url:"/range",
+                  method:"POST",
+                  data:{From:From, to:to},
+                  success:function(data)
+                  {
+                      $('#purchase_order').html(data);
+                      $('#purchase_order').append(data.htmlresponse);
+                  }
+              });
+          }
+          else
+          {
+              alert("Please Select the Date");
+          }
+      });
+
+        }
+      );
+      
+  </script>  
+
+  <!-- page script -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "scrollY": 750,
+        "scrollX": true
+    });
+  });
+</script>
+<!-- <script>
+$(document).ready(function() {
+  $('#datetimes').daterangepicker({
+       onSelect : function (dateText, inst) {
+          $('#formId').submit(); // <-- SUBMIT
+  }});
+});
+
+</script> -->
+
+<!-- <script type="text/javascript">
+  var startDate;
+  var endDate;
+  
+  $(document).ready(function() {
+      $('#datetimes').daterangepicker(
+         {
+            startDate: moment().subtract('days', 29),
+            endDate: moment(),
+            // minDate: '01/01/2012',
+            // maxDate: '12/31/2014',
+            dateLimit: { days: 60 },
+            showDropdowns: true,
+            showWeekNumbers: true,
+            timePicker: false,
+            timePickerIncrement: 1,
+            timePicker12Hour: true,
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+               'Last 7 Days': [moment().subtract('days', 6), moment()],
+               'Last 30 Days': [moment().subtract('days', 29), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+            },
+            opens: 'left',
+            buttonClasses: ['btn btn-default'],
+            applyClass: 'btn-small btn-primary',
+            cancelClass: 'btn-small',
+            format: 'DD/MM/YYYY',
+            separator: ' to ',
+            locale: {
+                applyLabel: 'Submit',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom Range',
+                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                firstDay: 1
+            }
+         },
+         function(start, end) {
+          console.log("Callback has been called!");
+          $('#datetimes span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
+          startDate = start;
+           endDate = end;    
+  
+         }
+      );
+      //Set the initial state of the picker label
+      $('#datetimes span').html(moment().subtract('days', 29).format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+  
+      $('#saveBtn').click(function(){
+          console.log(startDate.format('D MMMM YYYY') + ' - ' + endDate.format('D MMMM YYYY'));
+      });
+  
+   });
+  </script>   -->
+
+
+  
+<!-- <script>
+// $(function() {
+//   $('input[name="datetimes"]').daterangepicker({
+//     timePicker: true,
+//     // autoUpdateInput: false,
+//     applyClass: 'btn-small btn-primary',
+//     startDate: '2020-12-01',
+//     endDate: '2020-12-31',
+//     // startDate: moment().startOf('hour'),
+//     // endDate: moment().startOf('hour').add(24, 'hour'),
+//     onSelect : function (dateText, inst) {
+//             $('#formId').submit()}, // <-- SUBMIT
+//     locale: {
+//       applyLabel: 'Submit',
+//       format: 'YYYY/MM/DD hh:mm A'
+//     }}),
+//     $("#datetimes").submit()
+// });
+
+</script> -->
+<!-- <script>
+  $(document).ready(function() {
+    $('#datetimes').datepicker({
+         onSelect : function (dateText, inst) {
+            $('#formId').submit(); // <-- SUBMIT
+    }});
+  });</script> -->
+<!-- 
+<script>
+  $(function() {
+    $('input[name="datetimes"]').daterangepicker({
+      timePicker: true,
+      autoUpdateInput: true,
+      applyClass: 'btn-small btn-primary',
+      startDate: moment().startOf('hour'),
+      endDate: moment().startOf('hour').add(24, 'hour'),
+      
+      locale: {
+        applyLabel: 'Submit',
+        format: 'YYYY/MM/DD hh:mm A'
+      }
+    });
+  });
+  </script> -->
+
+<!-- <script type="text/javascript">
+  var startDate;
+  var endDate;
+  
+  $(document).ready(function() {
+      $('#datetimes').daterangepicker(
+         {
+            startDate: moment().subtract('days', 29),
+            endDate: moment(),
+            minDate: '01/01/2012',
+            maxDate: '12/31/2014',
+            dateLimit: { days: 60 },
+            showDropdowns: true,
+            showWeekNumbers: true,
+            timePicker: false,
+            timePickerIncrement: 1,
+            timePicker12Hour: true,
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+               'Last 7 Days': [moment().subtract('days', 6), moment()],
+               'Last 30 Days': [moment().subtract('days', 29), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+            },
+            opens: 'left',
+            buttonClasses: ['btn btn-default'],
+            applyClass: 'btn-small btn-primary',
+            cancelClass: 'btn-small',
+            format: 'DD/MM/YYYY',
+            separator: ' to ',
+            locale: {
+                applyLabel: 'Submit',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom Range',
+                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                firstDay: 1
+            }
+         },
+         function(start, end) {
+          console.log("Callback has been called!");
+          $('#datetimes span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
+          startDate = start;
+           endDate = end;    
+  
+         }
+      );
+      //Set the initial state of the picker label
+      $('#datetimes span').html(moment().subtract('days', 29).format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+  
+      $('#saveBtn').click(function(){
+          console.log(startDate.format('D MMMM YYYY') + ' - ' + endDate.format('D MMMM YYYY'));
+      });
+  
+   });
+  </script>   -->
+
+</body>
+</html>

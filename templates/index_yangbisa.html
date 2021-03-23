@@ -1,0 +1,105 @@
+﻿//templates/index.html
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Python Flask Date Range Search with jQuery Ajax DatePicker MySQL Database</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css"/>
+    <!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+</head>
+<body>
+<br/>
+<div class="container">
+<h2 align="center">Python Flask Date Range Search with jQuery Ajax DatePicker MySQL Database</h2>
+<br/>
+<br/>
+<div class="col-md-2">
+<input type="text" name="From" id="From" class="form-control" placeholder="From Date"/>
+</div>
+<div class="col-md-2">
+<input type="text" name="to" id="to" class="form-control" placeholder="To Date"/>
+</div>
+<div class="col-md-8">
+<input type="button" name="range" id="range" value="Range" class="btn btn-success"/>
+</div>
+<div class="clearfix"></div>
+<br/>
+<div id="purchase_order">
+  <table id="myTable1" class="table table-bordered table-striped">
+  <tr>
+    {% for header in colnames %} 
+    <th>{{ header }}</th>
+    {%endfor%} 
+ </tr>
+{% for rs in orders %}
+<tr>
+   {% for cell in rs %}
+   <td>{{cell}}</td>
+   {%endfor%}
+</tr>
+{%endfor%}
+</table>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
+
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+
+<script>
+  $(document).ready(function() {
+      $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
+          $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+      } );
+       
+      $('table.table').DataTable( {
+          scrollY:        750,
+          scrollX:        5,
+          scrollCollapse: true,
+      } );
+  
+  } );
+</script>
+<!-- Script -->
+<script>
+$(document).ready(function(){
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd'
+    });
+    $(function(){
+        $("#From").datepicker();
+        $("#to").datepicker();
+    });
+    $('#range').click(function(){
+        var From = $('#From').val();
+        var to = $('#to').val();
+        if(From != '' && to != '')
+        {
+            $.ajax({
+                url:"/range",
+                method:"POST",
+                data:{From:From, to:to},
+                success:function(data)
+                {
+                    console.log('cek')
+                    $('#purchase_order').html(data);
+                    $('#purchase_order').append(data.htmlresponse);
+                }
+            });
+        }
+        else
+        {
+            alert("Please Select the Date");
+        }
+    });
+});
+</script>
+</body>
+</html>
