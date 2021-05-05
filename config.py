@@ -1,35 +1,56 @@
 import datetime
 from datetime import timedelta
 
-confdictGir = {'k06gir':'k06gir',
-            'k10gir':'k10gir',
-            'k09gir':'k09gir',
-            'k11gir':'k11gir',
-            'k05gir':'k05gir',
-            'k08gir': 'k08gir',
-            'k02gir':'k02gir',
-            'k03gir':'k03gir',
-            'k04gir':'k04gir',
-            'k07gir':'k07gir',
-            'k12gir':'k12gir',
-            'k01gir':'k01gir',}
+confdictGir = {'K06GIR':'K06GIR',
+            'K10GIR':'K10GIR',
+            'K09GIR':'K09GIR',
+            'K11GIR':'K11GIR',
+            'K05GIR':'K05GIR',
+            'K08GIR': 'K08GIR',
+            'K02GIR':'K02GIR',
+            'K03GIR':'K03GIR',
+            'K04GIR':'K04GIR',
+            'K07GIR':'K07GIR',
+            'K12GIR':'K12GIR',
+            'K01GIR':'K01GIR',}
 
-def dictParameter(firstDict):
+def dictWhere(firstDict):
     dictGir = []
     for i in firstDict:
         stringGir = f''' PATH_FROM LIKE '%{i}%' OR PATH_TO LIKE '%{i}%' '''
         dictGir.append(stringGir)
+    keyJoin = 'OR'.join(dictGir)
+    return keyJoin
 
-    cekJoin = 'OR'.join(dictGir)
-    return cekJoin
+def dictCase(firstDict):
+    dictGir = []
+    for i in firstDict:
+        stringGir = f''' WHEN PATH_TO LIKE '%{i}%' THEN '{i}' '''
+        dictGir.append(stringGir)
+    keyJoin = ''.join(dictGir)
+    return keyJoin
+
+def dtypesFloat(dataframe):
+    colFloat = []
+    for col in dataframe.select_dtypes(include=['float64']):
+        colFloat.append(col)
+    return colFloat
 
 dateLastData = datetime.date.today()
-dateLastData = dateLastData.replace(month=2)
+dateLastData = dateLastData.replace(month=2, day=25)
 
 dateThirtyDays = dateLastData +timedelta(days=-30)
 
-dataDict = dictParameter(confdictGir)
-# print(dataDict)
+keyWhereGir = dictWhere(confdictGir)
+keyCaseGir = dictCase(confdictGir)
+
+
+# testJson = {
+#         "labels": ['Jan 2021', 'Feb 2021'],
+#         "data":
+
+# }
+# print(keyCaseGir)
 
 # def stringQuerrydef(dateFirst, dateLast, paramsData):
 #     stringQuerry = (f'''
@@ -70,3 +91,32 @@ dataDict = dictParameter(confdictGir)
 
 # print(dateLastData)
 # print(dateThirtyDays)
+
+# listGiro = [{'giro': 'E:\\GIRO\\K10GIRH_300121_030704.TXT'}, 
+# {'giro': 'E:\\GIRO\\K10GIRM_300121_030705.TXT'}, 
+# {'giro': 'E:\\GIRO\\K10GIRX_300121_030707.TXT'}, 
+# {'giro': 'E:\\GIRO\\K10GIRH_300121_042011.TXT'}, 
+# {'giro': 'E:\\GIRO\\K10GIRM_300121_042013.TXT'}, 
+# {'giro': 'E:\\GIRO\\K10GIRX_300121_042014.TXT'}, 
+# {'giro': 'E:\\GIRO\\K10GIRH_300121_051900.TXT'}, 
+# {'giro': 'E:\\GIRO\\K10GIRM_300121_051901.TXT'},
+#  {'giro': 'E:\\GIRO\\K06GIRH_300121_015318.TXT'}, 
+#  {'giro': 'E:\\GIRO\\K06GIRM_300121_015319.TXT'}, 
+#  {'giro': 'E:\\GIRO\\MK06GIR_300121_034543.TXT'}, 
+#  {'giro': 'E:\\GIRO\\MK10GIR_300121_034545.TXT'}, 
+#  {'giro': 'E:\\GIRO\\WK10GIR_300121_034603.TXT'}, 
+#  {'giro': 'E:\\GIRO\\WK06GIR_300121_034604.TXT'},
+#   {'giro': 'E:\\GIRO\\K04GIRH_020221_011049.TXT'}, 
+#   {'giro': 'E:\\GIRO\\K09GIRH_020221_011520.TXT'}, 
+#   {'giro': 'E:\\GIRO\\K12GIRM_020221_011521.TXT'}, 
+#   {'giro': 'E:\\GIRO\\K06GIRM_020221_011522.TXT'}, 
+#   {'giro': 'E:\\GIRO\\K05GIRM_020221_011524.TXT'}, 
+#   {'giro': 'E:\\GIRO\\K06GIRH_020221_011525.TXT'}, 
+#   {'giro': 'E:\\GIRO\\K09GIRM_020221_011526.TXT'}]
+
+# for dt in listGiro:
+#     dataListSplitBackSlash = dt['giro'].split('\\')
+#     dataListSplitUnderLine = dataListSplitBackSlash[2].split('_')
+#     dt['result'] = dataListSplitUnderLine[0][:-1]
+
+# print(listGiro)

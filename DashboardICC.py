@@ -5,6 +5,9 @@ import pandas as pd
 from flask_wtf import Form
 from wtforms.fields.html5 import DateField
 from datetime import datetime as dt
+import datetime
+import json
+from json import JSONEncoder
 
 from dao import *
 # from cekDict import *
@@ -16,29 +19,44 @@ app.secret_key = 'SHH!'
 
 @app.route("/")
 def main():
+    # dataChart = {}
     return render_template('index.html')
+
+# @app.route("/mastergiro", methods=["POST","GET"])
+# def mastergiro():
+#     dataDict = dictParameter(confdictGir)
+#     cnxn = connectionSQLExpress()
+#     cursor = cnxn.cursor()
+#     stringQuerry = funcstringQuerry('2021-01-01','2021-03-31',dataDict)
+#     print(stringQuerry)
+#     cursor.execute(stringQuerry)
+#     resultQuerry = cursor.fetchall()
+
+#     colNames = [i[0] for i in cursor.description]
+
+#     return render_template("mastergiro.html",menu='dataworkload', submenu='datagiro', rowTable=resultQuerry, headingTable=colNames)
 
 @app.route("/mastergiro", methods=["POST","GET"])
 def mastergiro():
-    dataDict = dictParameter(confdictGir)
     cnxn = connectionSQLExpress()
-    cursor = cnxn.cursor()
-    stringQuerry = funcstringQuerry(dateThirtyDays,dateLastData,dataDict)
-    cursor.execute(stringQuerry)
-    resultQuerry = cursor.fetchall()
-    colNames = [i[0] for i in cursor.description]
-    return render_template("mastergiro.html",menu='dataworkload', submenu='datagiro', rowTable=resultQuerry, headingTable=colNames)
-
+    data = giroDefault('2021-01-01','2021-02-28')
+    chartCKG = data['resultChartCKG']['dataChartCKG']
+    chartFZ = data['resultChartFileSize']['dataChartFileSize']
+    if data['status'] == 'F':
+            return render_template('404.html'), 404
+    return render_template("mastergiro.html",menu='dataworkload', submenu='datagiro', rowTable=data['resultTable']['resultRow'], headingTable=data['resultTable']['resultCol'],
+                            dataChartCKG=chartCKG,dataChartFZ=chartFZ)
 
 @app.route("/range",methods=["POST","GET"])
 def range(): 
     if request.method == 'POST':
         timing = request.form['From']
         timing2 = request.form['to']
-        data = giroRange(timing,timing2)
+        data = giroDefault(timing,timing2)
         if data['status'] == 'F':
-            return jsonify({'htmlresponse': render_template('response.html', rowTableUpdate=[],headingTableUpdate=[])})
-    return jsonify({'htmlresponse': render_template('response.html', rowTableUpdate=data['result']['resultQuerryUpdate'],headingTableUpdate=data['result']['colNames'])})
+            return jsonify({'htmlresponse': render_template('response.html', rowTableUpdate=[],headingTableUpdate=[])}, {'reponseCKG':[]}, {'responseFZ':[]})
+    return jsonify({'htmlresponse': render_template('response.html', rowTableUpdate=data['resultTable']['resultRow'],headingTableUpdate=data['resultTable']['resultCol'])},
+    {'reponseCKG':data['resultChartCKG']['dataChartCKG']}, {'responseFZ':data['resultChartFileSize']['dataChartFileSize']})
 
 
 @app.route("/mastersupplier", methods=["GET","POST"])

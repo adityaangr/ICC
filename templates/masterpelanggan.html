@@ -1,6 +1,13 @@
 {% include 'header.html' %}
 
-
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='plugins/fontawesome-free/css/all.min.css') }}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/adminlte.min.css') }}">
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -16,6 +23,182 @@
     </div>
     <!-- /.content-header -->
 
+            <!-- BAR CHART -->
+            <div class="container">
+              <table id="dt-table">
+                <thead>
+                  <tr>
+                    <th>Country</th>
+                    <th>Population (2017)</th>
+                    <th>Density (P/Km²)</th>
+                    <th>Med. Age</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>China</td>
+                    <td>1,409,517,397</td>
+                    <td>150 </td>
+                    <td>37</td>
+                  </tr>
+                  <tr>
+                    <td>India</td>
+                    <td>1,339,180,127</td>
+                    <td>450</td>
+                    <td>27</td>
+                  </tr>
+                  <tr>
+                    <td>U.S.</td>
+                    <td>324,459,463</td>
+                    <td>35</td>
+                    <td>38</td>
+                  </tr>
+                  <tr>
+                    <td>Indonesia</td>
+                    <td>263,991,379</td>
+                    <td>146</td>
+                    <td>28</td>
+                  </tr>
+                  <tr>
+                    <td>Indonesia</td>
+                    <td>100,000,000</td>
+                    <td>146</td>
+                    <td>28</td>
+                  </tr>
+                  <tr>
+                    <td>Brazil</td>
+                    <td>209,288,278</td>
+                    <td>25</td>
+                    <td>31</td>
+                  </tr>
+                  <tr>
+                    <td>Pakistan</td>
+                    <td>197,015,955</td>
+                    <td>256</td>
+                    <td>22</td>
+                  </tr>
+                  <tr>
+                    <td>Nigeria</td>
+                    <td>190,886,311</td>
+                    <td>210</td>
+                    <td>18</td>
+                  </tr>
+                  <tr>
+                    <td>Bangladesh</td>
+                    <td>164,669,751</td>
+                    <td>1,265</td>
+                    <td>26</td>
+                  </tr>
+                  <tr>
+                    <td>Russia</td>
+                    <td>143,989,754</td>
+                    <td>9</td>
+                    <td>39</td>
+                  </tr>
+                  <tr>
+                    <td>Mexico</td>
+                    <td>129,163,276</td>
+                    <td>66</td>
+                    <td>28</td>
+                  </tr>
+                  <tr>
+                    <td>Japan</td>
+                    <td>127,484,450</td>
+                    <td>350</td>
+                    <td>46</td>
+                  </tr>
+                  <tr>
+                    <td>Ethiopia</td>
+                    <td>104,957,438</td>
+                    <td>105</td>
+                    <td>19</td>
+                  </tr>
+                  <tr>
+                    <td>Philippines</td>
+                    <td>104,918,090</td>
+                    <td>352</td>
+                    <td>24</td>
+                  </tr>
+                  <tr>
+                    <td>Egypt</td>
+                    <td>97,553,151</td>
+                    <td>98</td>
+                    <td>25</td>
+                  </tr>
+                  <tr>
+                    <td>Viet Nam</td>
+                    <td>95,540,800</td>
+                    <td>308</td>
+                    <td>30</td>
+                  </tr>
+                  <tr>
+                    <td>Germany</td>
+                    <td>82,114,224</td>
+                    <td>236</td>
+                    <td>46</td>
+                  </tr>
+                  <tr>
+                    <td>DR Congo</td>
+                    <td>81,339,988</td>
+                    <td>36</td>
+                    <td>17</td>
+                  </tr>
+                  <tr>
+                    <td>Iran</td>
+                    <td>81,162,788</td>
+                    <td>50</td>
+                    <td>30</td>
+                  </tr>
+                  <tr>
+                    <td>Turkey</td>
+                    <td>80,745,020</td>
+                    <td>105</td>
+                    <td>30</td>
+                  </tr>
+                  <tr>
+                    <td>Thailand</td>
+                    <td>69,037,513</td>
+                    <td>135</td>
+                    <td>38</td>
+                  </tr>
+            
+                  <tr>
+                    <td>U.K.</td>
+                    <td>66,181,585</td>
+                    <td>274</td>
+                    <td>40</td>
+                  </tr>
+                  <tr>
+                    <td>France</td>
+                    <td>64,979,548</td>
+                    <td>119</td>
+                    <td>41</td>
+                  </tr>
+                  <tr>
+                    <td>Italy</td>
+                    <td>59,359,900</td>
+                    <td>202</td>
+                    <td>46</td>
+                  </tr>
+                  <tr>
+                    <td>Tanzania</td>
+                    <td>57,310,019</td>
+                    <td>65</td>
+                    <td>17</td>
+                  </tr>
+                  <tr>
+                    <td>South Africa</td>
+                    <td>56,717,156</td>
+                    <td>47</td>
+                    <td>26</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div id="chart"></div>
+            </div>
+            <!-- /.card -->
+
+            <!-- /.card -->
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid"> 
@@ -25,5 +208,211 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+
+<!-- page script -->
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+
+<!-- <script>
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [{
+              label: '# of Votes',
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  });
+  </script> -->
+
+<script>
+  let draw = false;
+
+init();
+
+/**
+ * FUNCTIONS
+ */
+
+function init() {
+  // initialize DataTables
+  const table = $("#dt-table").DataTable();
+  // get table data
+  const tableData = getTableData(table);
+  // create Highcharts
+  createHighcharts(tableData);
+  // table events
+  setTableEvents(table);
+}
+
+function getTableData(table) {
+  const dataArray = [],
+    countryArray = [],
+    populationArray = [],
+    densityArray = [];
+
+  // loop table rows
+  table.rows({ search: "applied" }).every(function() {
+    const data = this.data();
+    countryArray.push(data[0]);
+    populationArray.push(parseInt(data[1].replace(/\,/g, "")));
+    densityArray.push(parseInt(data[2].replace(/\,/g, "")));
+  });
+
+  // store all data in dataArray
+  dataArray.push(countryArray, populationArray, densityArray);
+
+  return dataArray;
+}
+
+function createHighcharts(data) {
+  Highcharts.setOptions({
+    lang: {
+      thousandsSep: ","
+    }
+  });
+
+  Highcharts.chart("chart", {
+    title: {
+      text: "DataTables to Highcharts"
+    },
+    subtitle: {
+      text: "Data from worldometers.info"
+    },
+    xAxis: [
+      {
+        categories: data[0],
+        labels: {
+          rotation: -45
+        }
+      }
+    ],
+    yAxis: [
+      {
+        // first yaxis
+        title: {
+          text: "Population (2017)"
+        }
+      },
+      {
+        // secondary yaxis
+        title: {
+          text: "Density (P/Km²)"
+        },
+        min: 0,
+        opposite: true
+      }
+    ],
+    series: [
+      {
+        name: "Population (2017)",
+        color: "#0071A7",
+        type: "column",
+        data: data[1],
+        tooltip: {
+          valueSuffix: " M"
+        }
+      },
+      {
+        name: "Density (P/Km²)",
+        color: "#FF404E",
+        type: "spline",
+        data: data[2],
+        yAxis: 1
+      }
+    ],
+    tooltip: {
+      shared: true
+    },
+    legend: {
+      backgroundColor: "#ececec",
+      shadow: true
+    },
+    credits: {
+      enabled: false
+    },
+    noData: {
+      style: {
+        fontSize: "16px"
+      }
+    }
+  });
+}
+
+function setTableEvents(table) {
+  // listen for page clicks
+  table.on("page", () => {
+    draw = true;
+  });
+
+  // listen for updates and adjust the chart accordingly
+  table.on("draw", () => {
+    if (draw) {
+      draw = false;
+    } else {
+      const tableData = getTableData(table);
+      createHighcharts(tableData);
+    }
+  });
+}
+  </script>
+      <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/alasql@1.7"></script>  -->
+ <script src="{{ url_for('static', filename='alasql/alasql.js') }}"></script>
+  <script>
+
+var data = [
+  { Phase: "Phase 1", Step: "Step 1", Task: "Task 1", Value: "5" },
+  { Phase: "Phase 1", Step: "Step 1", Task: "Task 2", Value: "10" },
+  { Phase: "Phase 2", Step: "Step 1", Task: "Task 2", Value: "10" },
+  { Phase: "Phase 2", Step: "Step 1", Task: "Task 2", Value: "6" }
+];
+
+var res = alasql(
+  "SELECT Phase, Step, SUM(CAST([Value] AS INT)) AS [Value] \
+                  FROM ? GROUP BY Phase,Step",
+  [data]
+);
+console.log(res, ">>>");
+  </script>
+  <!-- <script>
+    alasql("CREATE TABLE test (language INT, hello STRING)");
+    alasql("INSERT INTO test VALUES (1,'Hello!')");
+    alasql("INSERT INTO test VALUES (2,'Aloha!')");
+    alasql("INSERT INTO test VALUES (3,'Bonjour!')");
+    console.log( alasql("SELECT * FROM test WHERE language > 1") );
+    </script> -->
 
   {% include 'footer.html' %}

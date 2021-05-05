@@ -1,86 +1,262 @@
 {% include 'header.html' %}
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-   <!-- Content Header (Page header) -->
-   <div class="content-header">
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
       <div class="container-fluid">
-         <div class="row mb-2">
-            <div class="col-sm-6">
-               <h1 class="m-0 text-dark">Data Cek</h1>
-            </div>
-            <!-- /.col -->
-         </div>
-         <!-- /.row -->
-         <!-- /.content-header -->
-         <!-- Main content -->
-         <section class="content">
-            <div class="row">
-               <div class="col-12">
-                  <!-- datepicker-->
-                  <div class="card card-primary">
-                     <div class="card-header">
-                        <h3 class="card-title">Date picker</h3>
-                     </div>
-                     <div class="card-body">
-                        <label>Date and time range:</label>
-                        <!-- Date and time range -->
-                        <div class="input-group">
-                           <div class="input-group-prepend">
-                             <span class="input-group-text"><i class="far fa-clock"></i></span>
-                           </div>
-                           <input type="text" name="From" id="From" class="form-control float-right">
-                           <!-- <input type="date" name='tgl1'>
-                           <input type="date" name='tgl2'> -->
-                         </div>
-                         <br/>
-                         <div class="col-md">
-                           Cek input tanggal: <span id="result"></span>
-                           <script>
-                              function pr() {
-                                document.getElementById("result").innerHTML = document.getElementById('From').value + " "
-                              }
-                            </script>
-                              </div>
-                         <input type="button" name="range" id="range" value="Range" class="btn btn-success" onClick="pr()"/>
-                           <!-- /.input group -->
-                        </div>
-                     <!-- /.form group -->
-                     <!-- Date and time range -->
-                  </div>
-                  <!-- /.card-body -->
-               </div>
-            </div>
-         </section>
-         <!-- /.card-body -->
-         <!-- datepicker-->
-         <!-- MULAI SINI DATA TABLE -->
-         <!-- /.card -->
-                 <!-- BAR CHART -->
-                 <div class="card card-success">
-                  <div class="card-header">
-                    <h3 class="card-title">Bar Chart</h3>
-    
-                    <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                      </button>
-                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="chart">
-                      <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                    </div>
-                  </div>
-                  <!-- /.card-body -->
-                </div>
-         <!-- /.card -->
-      </div>
-      <!-- /.col -->
-   </div>
-   <!-- /.row -->
-   </section>
-   <!-- /.content -->
-</div>
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Data Giro</h1>
+          </div>
+          
+          
+          <!-- /.col -->
+        </div><!-- /.row -->
+
+
+    <!-- /.content-header -->
+
+
 <!-- /.content -->
-<!-- /.content-wrapper -->
-{% include 'footer.html' %}
+
+</div>
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+     <div class="col-12">
+        <!-- datepicker-->
+        <div class="card card-primary">
+           <!-- <div class="card-header">
+              <h3 class="card-title">Input parameter:</h3>
+           </div> -->
+           <div class="card bg-secondary text-white">
+            <div class="card-body">Secondary card</div>
+          </div>
+           
+              <div class="card-body">
+                 <label>Date and time range:</label>
+                 <!-- Date and time range -->
+                 <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="far fa-clock"></i></span>
+                    </div>
+                    <input type="text" name="From" id="From" class="form-control float-right">
+                    <!-- <input type="date" name='tgl1'>
+                    <input type="date" name='tgl2'> -->
+                  </div>
+                  <br/>
+                  <div class="col-md">
+                    Cek input tanggal: <span id="result"></span>
+                    <script>
+                       function pr() {
+                         document.getElementById("result").innerHTML = document.getElementById('From').value + " "
+                       }
+                     </script>
+                       </div>
+                  <input type="button" name="range" id="range" value="Range" class="btn btn-success" onClick="pr()"/>
+                    <!-- /.input group -->
+                 </div>
+                 <div class="clearfix"></div>
+              </div>
+              <div class="card-body" id="purchase_order">
+                <table id="example2" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                    {% for header in headingTable %} 
+                    <th>{{ header }}</th>
+      
+                    {%endfor%} 
+                    </tr>
+                    <tbody>
+                    {% for rs in rowTable %}
+                  <tr>
+                    {% for cell in rs %}
+                    <td>{{cell}}</td>
+                    {%endfor%}
+                  </tr>
+                  {%endfor%}
+                  </tbody>
+                </thead>
+                </table>
+               </div>
+
+
+                                        
+           <!-- /.form group -->
+           <!-- Date and time range -->
+        </div>
+        <!-- /.card-body -->
+     </div>
+            <!-- STACKED BAR CHART -->
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">Chart Giro</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <canvas id="stackedBarChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+    </section>
+</div>
+</div>
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- ChartJS -->
+<script src="{{ url_for('static', filename='plugins/chart.js/Chart.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ url_for('static', filename='dist/js/demo.js') }}"></script>
+<!-- page script -->
+
+<!-- <script>
+
+  let draw = false;
+  
+  init();
+  
+  /**
+   * FUNCTIONS
+   */
+  
+  function init() {
+    // initialize DataTables
+    const table = $("#example1").DataTable();
+    console.log(table);
+    // get table data
+    const tableData = getTableData(table);
+    console.log(tableData);
+    // create Highcharts
+    createHighcharts(tableData);
+    // table events
+    setTableEvents(table);
+  }
+  
+  function getTableData(table) {
+    const dataArray = [],
+      countryArray = [],
+      populationArray = [],
+      densityArray = [];
+  
+    // loop table rows
+    table.rows({ search: "applied" }).every(function() {
+      const data = this.data();
+      countryArray.push(data[0]);
+      populationArray.push(parseInt(data[1].replace(/\,/g, "")));
+      densityArray.push(parseInt(data[2].replace(/\,/g, "")));
+    });
+  
+    // store all data in dataArray
+    dataArray.push(countryArray, populationArray, densityArray);
+  
+    return dataArray;
+  }
+  
+  function createHighcharts(data) {
+    Highcharts.setOptions({
+      lang: {
+        thousandsSep: ","
+      }
+    });
+  
+    Highcharts.chart("chart", {
+      title: {
+        text: "DataTables to Highcharts"
+      },
+      subtitle: {
+        text: "Data from worldometers.info"
+      },
+      xAxis: [
+        {
+          categories: data[0],
+          labels: {
+            rotation: -45
+          }
+        }
+      ],
+      yAxis: [
+        {
+          // first yaxis
+          title: {
+            text: "Population (2017)"
+          }
+        },
+        {
+          // secondary yaxis
+          title: {
+            text: "Density (P/Km²)"
+          },
+          min: 0,
+          opposite: true
+        }
+      ],
+      series: [
+        {
+          name: "Population (2017)",
+          color: "#0071A7",
+          type: "column",
+          data: data[1],
+          tooltip: {
+            valueSuffix: " M"
+          }
+        },
+        {
+          name: "Density (P/Km²)",
+          color: "#FF404E",
+          type: "spline",
+          data: data[2],
+          yAxis: 1
+        }
+      ],
+      tooltip: {
+        shared: true
+      },
+      legend: {
+        backgroundColor: "#ececec",
+        shadow: true
+      },
+      credits: {
+        enabled: false
+      },
+      noData: {
+        style: {
+          fontSize: "16px"
+        }
+      }
+    });
+  }
+  
+  function setTableEvents(table) {
+    // listen for page clicks
+    table.on("page", () => {
+      draw = true;
+    });
+  
+    // listen for updates and adjust the chart accordingly
+    table.on("draw", () => {
+      if (draw) {
+        draw = false;
+      } else {
+        const tableData = getTableData(table);
+        createHighcharts(tableData);
+      }
+    });
+  }
+  
+  </script> -->
+
+  {% include 'footer.html' %}

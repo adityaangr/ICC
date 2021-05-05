@@ -1,6 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+    body {
+  font-family: Helvetica, Arial, sans-serif;
+  padding: 20px;
+  background: #ececec;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 10px;
+}
+
+#dt-table_wrapper {
+  width: 35%;
+  margin-right: 2%;
+}
+
+#chart {
+  width: 63%;
+}
+
+table {
+  text-align: left;
+}
+
+@media screen and (max-width: 1200px) {
+  #dt-table_wrapper,
+  #chart {
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  #dt-table_wrapper {
+    margin-right: 0;
+  }
+}
+.tab-content > .tab-pane:not(.active) { display: block; height: 0; overflow-y: hidden; }
+  </style>
+
+
   <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>AdminLTE 3 | Dashboard</title>
@@ -31,6 +78,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/summernote/summernote-bs4.css') }}">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <!-- avooid icon -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">

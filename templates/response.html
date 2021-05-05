@@ -1,31 +1,9 @@
-<div id="purchase_order">
-  <table id="example1" class="table table-bordered table-striped">
-    <thead>
-      <tr>
-      {% for header in headingTableUpdate %} 
-      <th>{{ header }}</th>
 
-      {%endfor%} 
-      </tr>
-      <tbody>
-      {% for rs in rowTableUpdate %}
-    <tr>
-      {% for cell in rs %}
-      <td>{{cell}}</td>
-      {%endfor%}
-    </tr>
+  {% for rs in rowTableUpdate %}
+  <tr>
+    {% for cell in rs %}
+    <td>{{cell}}</td>
     {%endfor%}
-    </tbody>
-  </thead>
-  </table>
-</div>
-
-<!-- page script -->
-<script>
-  $(function () {
-    $("#example1").DataTable({
-      "scrollY": 750,
-        "scrollX": true
-    });
-  });
-</script>
+  </tr>
+  \r\n
+  {%endfor%}

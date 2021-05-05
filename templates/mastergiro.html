@@ -2,6 +2,8 @@
 
 
   <!-- Content Wrapper. Contains page content -->
+  <!-- comot internet untuk hilangin error, ada style di headrnya-->
+  <div class="tab-content">
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -9,6 +11,7 @@
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1 class="m-0 text-dark">Data Giro</h1>
+            <br>
           </div>
           
           
@@ -28,12 +31,15 @@
      <div class="col-12">
         <!-- datepicker-->
         <div class="card card-primary">
-           <div class="card-header">
-              <h3 class="card-title">Input parameter:</h3>
-           </div>
+          <div class="card bg-info text-white">
+            <div class="card-header">
+
+            <div class="card-title">Date Input:</div>
+          </div>
+        </div>
            
               <div class="card-body">
-                 <label>Date and time range:</label>
+                 <!-- <label>Date and time range:</label> -->
                  <!-- Date and time range -->
                  <div class="input-group">
                     <div class="input-group-prepend">
@@ -44,22 +50,23 @@
                     <input type="date" name='tgl2'> -->
                   </div>
                   <br/>
-                  <div class="col-md">
-                    Cek input tanggal: <span id="result"></span>
+                  <div>
+                    Selected date and time: <span id="result"></span>
                     <script>
                        function pr() {
                          document.getElementById("result").innerHTML = document.getElementById('From').value + " "
                        }
                      </script>
                        </div>
-                  <input type="button" name="range" id="range" value="Range" class="btn btn-success" onClick="pr()"/>
+                  <input type="button" name="range" id="range" value="Submit" class="btn btn-primary" onClick="pr()"/>
                     <!-- /.input group -->
                  </div>
                  <div class="clearfix"></div>
               </div>
               <div class="card-body" id="purchase_order">
                 <table id="example1" class="table table-bordered table-striped">
-                  <thead>
+
+                  <thead> 
                     <tr>
                     {% for header in headingTable %} 
                     <th>{{ header }}</th>
@@ -75,6 +82,14 @@
                   </tr>
                   {%endfor%}
                   </tbody>
+                  <tfoot>
+                    <tr>
+                      {% for header in headingTable %} 
+                      <th>{{ header }}</th>
+        
+                      {%endfor%} 
+                      </tr>
+                  </tfoot>
                 </thead>
                 </table>
                </div>
@@ -86,30 +101,50 @@
         </div>
         <!-- /.card-body -->
      </div>
-                 <!-- BAR CHART -->
-                 <div class="card card-success">
-                  <div class="card-header">
-                    <h3 class="card-title">Bar Chart</h3>
-    
-                    <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                      </button>
-                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="chart">
-                      <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                    </div>
-                  </div>
-                  <!-- /.card-body -->
+            <!-- STACKED BAR CHART -->
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">Chart Jumlah Pengiriman Giro</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
                 </div>
+              </div>
+              <div class="card-body">
+                <!-- <div > -->
+                  <div id="chartCKG" value='{{dataChartCKG}}' class="chart">
+                  <canvas id="canvasCKG" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+                </div>
+                <!-- </div> -->
+              </div>
+              <!-- /.card-body -->
+            </div>
+                        <!-- STACKED BAR CHART -->
+                        <div class="card card-success">
+                          <div class="card-header">
+                            <h3 class="card-title">Chart File Size Pengiriman Giro</h3>
+            
+                            <div class="card-tools">
+                              <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                              </button>
+                              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                            </div>
+                          </div>
+                          <div class="card-body">
+                            <div id="chartFZ" value='{{dataChartFZ}}' class="chart">
+                              <canvas id="canvasFZ" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+            <!-- /.card -->
     </section>
 </div>
 </div>
+</div>
 
-<!-- /.content -->
-
-<!-- /.content-wrapper -->
 
   {% include 'footer.html' %}

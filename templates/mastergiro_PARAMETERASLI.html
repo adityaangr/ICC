@@ -1,0 +1,525 @@
+{% include 'header.html' %}
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Data Giro</h1>
+          </div>
+          
+          
+          <!-- /.col -->
+        </div><!-- /.row -->
+
+
+    <!-- /.content-header -->
+
+
+<!-- /.content -->
+
+</div>
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+     <div class="col-12">
+        <!-- datepicker-->
+        <div class="card card-primary">
+           <div class="card-header">
+              <h3 class="card-title">Input parameter:</h3>
+           </div>
+           
+              <div class="card-body">
+                 <label>Date and time range:</label>
+                 <!-- Date and time range -->
+                 <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="far fa-clock"></i></span>
+                    </div>
+                    <input type="text" name="From" id="From" class="form-control float-right">
+                    <!-- <input type="date" name='tgl1'>
+                    <input type="date" name='tgl2'> -->
+                  </div>
+                  <br/>
+                  <div class="col-md">
+                    Cek input tanggal: <span id="result"></span>
+                    <script>
+                       function pr() {
+                         document.getElementById("result").innerHTML = document.getElementById('From').value + " "
+                       }
+                     </script>
+                       </div>
+                  <input type="button" name="range" id="range" value="Range" class="btn btn-success" onClick="pr()"/>
+                    <!-- /.input group -->
+                 </div>
+                 <div class="clearfix"></div>
+              </div>
+              <div class="card-body" id="purchase_order">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                    {% for header in headingTable %} 
+                    <th>{{ header }}</th>
+      
+                    {%endfor%} 
+                    </tr>
+                    <tbody>
+                    {% for rs in rowTable %}
+                  <tr>
+                    {% for cell in rs %}
+                    <td>{{cell}}</td>
+                    {%endfor%}
+                  </tr>
+                  {%endfor%}
+                  </tbody>
+                </thead>
+                </table>
+               </div>
+
+
+                                        
+           <!-- /.form group -->
+           <!-- Date and time range -->
+        </div>
+        <!-- /.card-body -->
+     </div>
+            <!-- STACKED BAR CHART -->
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">Chart Giro</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <canvas id="stackedBarChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+    </section>
+</div>
+</div>
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- ChartJS -->
+<script src="{{ url_for('static', filename='plugins/chart.js/Chart.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ url_for('static', filename='dist/js/demo.js') }}"></script>
+<!-- page script -->
+
+
+
+
+<!-- test bareng iwan -->
+<script>
+  $(function () { 
+    $(document).ready(function() {
+    // Setup - add a text input to each footer cell
+    $('#example1 tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+    var table = $('#example1').DataTable({
+      "scrollY": 750,
+        "scrollX": true,
+        initComplete: function () {
+            // Apply the search
+            this.api().columns().every( function () {
+                var that = this;
+ 
+                $( 'input', this.footer() ).on( 'keyup change clear', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                  });
+            });
+        }
+    });
+
+    // console.log(table);
+    var dataArray = table.rows().data()
+    console.log(dataArray, '<<dataArray')
+    let newData = []
+
+    for (let i = 0 ; i < dataArray.length ; i ++){
+
+      let obj = {
+        'date': dataArray[i][0],
+        'Key_GIR' : dataArray[i][2],
+        'count_key_GIR' : dataArray[i][3],
+        'File_Size' : dataArray[i][4]
+      }
+      newData.push(obj)
+    }
+
+    console.log(newData, '<< newData')
+
+    let group = newData.reduce((r, a) => {
+
+      r[a.date] = [...r[a.date] || [], ...r[a.Key_GIR] || [], a]
+
+      return r
+    }, {})
+
+    console.log(group, '<<group')
+    var res = alasql(
+  "SELECT date, Key_GIR, SUM(CAST([count_key_GIR] AS INT)) AS [count_key_GIR],SUM(CAST([File_Size] AS INT)) AS [File_Size] \
+                  FROM ? GROUP BY date,Key_GIR ORDER BY date desc,Key_GIR asc",
+  [newData]
+);
+console.log(res, ">> res");
+
+let groupRES = res.reduce((r, a) => {
+
+      r[a.date] = [...r[a.date] || [], ...r[a.Key_GIR] || [], a]
+
+      return r
+    }, {})
+
+    console.log(groupRES, '<<groupRES')
+
+var dateOnly = alasql(
+  "SELECT DISTINCT(date) \
+                  FROM ? ",
+  [res]
+);
+console.log(dateOnly, "<<dateOnly");
+var cekQuerry = alasql(
+  "SELECT DISTINCT Key_GIR \
+                  FROM ? ORDER BY Key_GIR",
+  [res]
+);
+console.log(cekQuerry, "<<cekQuerry");
+var flags111 = [], outputDate111 = [], l = cekQuerry.length, i;
+for( i=0; i<l; i++) {
+    if( flags111[cekQuerry[i].Key_GIR]) continue;
+    flags111[cekQuerry[i].Key_GIR] = true;
+    outputDate111.push(cekQuerry[i].Key_GIR);
+}
+console.log(outputDate111, '<<cekQuerry22>>');
+
+var output = res.reduce(function(o, cur) {
+
+// Get the index of the key-value pair.
+var occurs = o.reduce(function(n, item, i) {
+  return (item.Key_GIR === cur.Key_GIR) ? i : n;
+}, -1);
+
+if (occurs >= 0) {
+
+  o[occurs].count_key_GIR = o[occurs].count_key_GIR.concat(cur.count_key_GIR);
+  console.log(o[occurs].count_key_GIR)
+} else {
+
+  // add the current item to o (but make sure the value is an array).
+  var obj = {
+    Key_GIR: cur.Key_GIR,
+    count_key_GIR: [cur.count_key_GIR]
+  };
+  o = o.concat([obj]);
+}
+
+return o;
+}, []);
+
+console.log(output,'output');
+
+var flags = [], outputDate = [], l = res.length, i;
+for( i=0; i<l; i++) {
+    if( flags[res[i].date]) continue;
+    flags[res[i].date] = true;
+    outputDate.push(res[i].date);
+}
+console.log(outputDate, '<<valuesDate>>');
+
+  var flagszero = [], outputKeyGir = [], l = res.length, i;
+for( i=0; i<l; i++) {
+    if( flagszero[res[i].Key_GIR]) continue;
+    flagszero[res[i].Key_GIR] = true;
+    outputKeyGir.push(res[i].Key_GIR);
+}
+console.log(outputKeyGir, '<<valuesKeyGir>>');
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+  var datasets = [];
+for (var i = 0; i < output.length; i++) {
+    var data = 
+        {
+        label: [output[i].Key_GIR],
+        data: output[i].count_key_GIR,
+        backgroundColor: getRandomColor(),
+    };
+    datasets.push(data);
+}
+console.log(datasets,'>>cekinchardatasets')
+//coba append data in res
+var dataMentah =  res;
+var keynya = outputDate111;
+// var datenya = outputDate;
+console.log(dataMentah,'dataMentah');
+console.log(keynya,'keynya');
+// console.log(datenya,'datenya');
+var datenya = ["Jan 2021","Feb 2021"]
+// datenya.forEach( date1 => {
+// 	if(!dataMentah.find( date2 => date2===date1 )) 
+
+//   {
+//   alert("found1");
+//   dataMentah.push(date1)
+// } else{
+//     alert("notfound2");
+// }
+// })
+dataCekk = []
+for (var i = 0; i <datenya.length;i> i++) {
+    var data =   Array.from(new Set(keynya), x => x+','+datenya[i] )
+
+        // {
+        // label: keynya[i],
+        // date : datenya[i],
+
+    // };
+
+    dataCekk.push(data);
+  }
+console.log(dataCekk, 'dataCekk')
+newArray =[]
+for (let i = 0 ; i < dataCekk.length ; i ++){
+      Array.prototype.push.apply(newArray,dataCekk[i])
+    }
+console.log(newArray, 'newArray')
+// var array1 = array1.concat(array2));
+const result11 = newArray.join(',');
+console.log(result11, 'result')
+const result22 = result11.split(',');
+console.log(result22, 'result')
+var chunksize = 2;
+
+
+var chunks = [];
+
+result22.forEach((item)=>{
+  if(!chunks.length || chunks[chunks.length-1].length == chunksize)
+  chunks.push([]);
+
+  chunks[chunks.length-1].push(item);
+});
+
+console.log(chunks, 'chunks');
+
+asd11 = []
+for (let i = 0 ; i < chunks.length ; i ++){
+      let obj2 = {
+        'date': chunks[i][1],
+        'Key_GIR' : chunks[i][0],
+        'count_key_GIR' : 0,
+        'File_Size' : 0
+      }
+      asd11.push(obj2)
+    }
+console.log(asd11, 'asd11');
+
+
+tes = []
+
+for(let i = 0; i < asd11.length; i++){
+  hitung = 0;
+  for(let j = 0; j < dataMentah.length; j++){
+    if((asd11[i].date == dataMentah[j].date) && (asd11[i].Key_GIR == dataMentah[j].Key_GIR)){
+      asd11[i].count_key_GIR = dataMentah[j].count_key_GIR
+      asd11[i].File_Size = dataMentah[j].File_Size
+    } 
+  }
+  // if(hitung > 0){
+  //   asd11[i].count_key_GIR = 
+  //   dataMentah.push(asd11[i])
+  // }
+}
+console.log(asd11, "TESORDER")
+var dataMentahArdi = asd11.reduce(function(o, cur) {
+
+// Get the index of the key-value pair.
+var occurs = o.reduce(function(n, item, i) {
+  return (item.Key_GIR === cur.Key_GIR) ? i : n;
+}, -1);
+// console.log(occurs,'occurs')
+// If the name is found,
+if (occurs >= 0) {
+
+  // append the current value to its list of values.
+  o[occurs].count_key_GIR = o[occurs].count_key_GIR.concat(cur.count_key_GIR);
+  o[occurs].File_Size = o[occurs].File_Size.concat(cur.File_Size);
+  console.log(o[occurs].File_Size,'ceko[coccurs]')
+  // Otherwise,
+} else {
+
+  // add the current item to o (but make sure the value is an array).
+  var obj = {
+    Key_GIR: cur.Key_GIR,
+    count_key_GIR: [cur.count_key_GIR],
+    File_Size: [cur.File_Size]
+  };
+  o = o.concat([obj]);
+}
+
+return o;
+}, []);
+console.log(dataMentahArdi, "dataMentahArdi")
+var datasets_count_key_gir = [];
+var datasets_file_size = [];
+for (var i = 0; i < dataMentahArdi.length; i++) {
+    var data_count_key_GIR = 
+        {
+        label: [dataMentahArdi[i].Key_GIR],
+        data: dataMentahArdi[i].count_key_GIR,
+        backgroundColor: getRandomColor(),
+        stack: "count_key_GIR",
+    };
+    datasets_count_key_gir.push(data_count_key_GIR);
+    var data_File_Size = 
+        {
+        label: [dataMentahArdi[i].Key_GIR],
+        data: dataMentahArdi[i].File_Size,
+        backgroundColor: getRandomColor(),
+        stack: "File_Size",
+    };
+    datasets_file_size.push(data_File_Size);
+    // datasets_file_size.push(datasets_count_key_gir);
+    // datasets_file_size = Object.assign(datasets_count_key_gir)
+}
+console.log(datasets_count_key_gir,'datasets_count_key_gir')
+console.log(datasets_file_size,'datasets_file_size')
+
+
+
+// console.log(data12, 'dataDummy')
+    var areaChartData = {
+      labels  : outputDate,
+      datasets : datasets_count_key_gir
+
+    }
+    //-------------
+    //- BAR CHART -
+    //-------------
+
+    console.log(areaChartData,'areachartdata')
+    var barChartData = jQuery.extend(true, {}, areaChartData);
+    var temp0 = areaChartData.datasets[0];
+    var temp1 = areaChartData.datasets[1];
+
+    barChartData.datasets[0] = temp1;
+    barChartData.datasets[1] = temp0;
+    var barChartOptions =   {
+    plugins: {
+      title: {
+        display: true,
+        text: 'Chart.js Bar Chart - Stacked'
+      },
+    },
+    responsive: true,
+    interaction: {
+      intersect: false,
+    },
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true
+      }
+    }
+  }
+
+    // console.log(areaChartData1,'cekStrukturData')
+    //---------------------
+    //- STACKED BAR CHART -
+    //---------------------
+    var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
+    var stackedBarChartData = jQuery.extend(true, {}, barChartData)
+
+    var stackedBarChartOptions = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      scales: {
+        xAxes: [{
+          stacked: true,
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+      }
+    }
+    var stackedBarChart = new Chart(stackedBarChartCanvas, {
+      type: 'bar', 
+      data: stackedBarChartData,
+      options: stackedBarChartOptions
+    })
+
+    // new chart 
+    var areaChartDataFileSize = {
+      labels  : outputDate,
+      datasets : datasets_file_size
+
+    }
+    //-------------
+    //- BAR CHART -
+    //-------------
+
+    console.log(areaChartDataFileSize,'areachartdata')
+    var barChartDataFileSize = jQuery.extend(true, {}, areaChartDataFileSize);
+    var temp0 = areaChartDataFileSize.datasets[0];
+    var temp1 = areaChartDataFileSize.datasets[1];
+
+    barChartDataFileSize.datasets[0] = temp1;
+    barChartDataFileSize.datasets[1] = temp0;
+
+    var stackedBarChartCanvas2 = $('#stackedBarChart2').get(0).getContext('2d')
+  var stackedBarChartData2 = jQuery.extend(true, {}, barChartDataFileSize)
+
+    var stackedBarChartOptions2 = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      scales: {
+        xAxes: [{
+          stacked: true,
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+      }
+    }
+    var stackedBarChart2 = new Chart(stackedBarChartCanvas2, {
+      type: 'bar', 
+      data: stackedBarChartData2,
+      options: stackedBarChartOptions2
+    })
+  });
+  })
+</script>
+  <!-- test bareng iwan -->
+<!-- /.content -->
+
+<!-- /.content-wrapper -->
+
+  {% include 'footer.html' %}

@@ -1,0 +1,811 @@
+{% include 'header.html' %}
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Data Giro</h1>
+          </div>
+          
+          
+          <!-- /.col -->
+        </div><!-- /.row -->
+
+
+    <!-- /.content-header -->
+
+
+<!-- /.content -->
+
+</div>
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+     <div class="col-12">
+        <!-- datepicker-->
+        <div class="card card-primary">
+           <div class="card-header">
+              <h3 class="card-title">Input parameter:</h3>
+           </div>
+           
+              <div class="card-body">
+                 <label>Date and time range:</label>
+                 <!-- Date and time range -->
+                 <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="far fa-clock"></i></span>
+                    </div>
+                    <input type="text" name="From" id="From" class="form-control float-right">
+                    <!-- <input type="date" name='tgl1'>
+                    <input type="date" name='tgl2'> -->
+                  </div>
+                  <br/>
+                  <div class="col-md">
+                    Cek input tanggal: <span id="result"></span>
+                    <script>
+                       function pr() {
+                         document.getElementById("result").innerHTML = document.getElementById('From').value + " "
+                       }
+                     </script>
+                       </div>
+                  <input type="button" name="range" id="range" value="Range" class="btn btn-success" onClick="pr()"/>
+                    <!-- /.input group -->
+                 </div>
+                 <div class="clearfix"></div>
+              </div>
+              <div class="card-body" id="purchase_order">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                    {% for header in headingTable %} 
+                    <th>{{ header }}</th>
+      
+                    {%endfor%} 
+                    </tr>
+                    <tbody>
+                    {% for rs in rowTable %}
+                  <tr>
+                    {% for cell in rs %}
+                    <td>{{cell}}</td>
+                    {%endfor%}
+                  </tr>
+                  {%endfor%}
+                  </tbody>
+                </thead>
+                </table>
+               </div>
+
+
+                                        
+           <!-- /.form group -->
+           <!-- Date and time range -->
+        </div>
+        <!-- /.card-body -->
+     </div>
+            <!-- STACKED BAR CHART -->
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">Chart Giro</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <canvas id="stackedBarChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+    </section>
+</div>
+</div>
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- ChartJS -->
+<script src="{{ url_for('static', filename='plugins/chart.js/Chart.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ url_for('static', filename='dist/js/demo.js') }}"></script>
+<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/alasql@1.7"></script> -->
+<!-- <script type="module" src="{{ url_for('static', filename='alasql/alasql.js') }}"></script> -->
+<!-- page script -->
+<script src="{{ url_for('static', filename='alasql/alasql.js') }}"></script>
+<!-- lo dash -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+
+<script>
+
+
+// var data = [
+//   { Phase: "Phase 1", Step: "Step 1", Task: "Task 1", Value: "5" },
+//   { Phase: "Phase 1", Step: "Step 1", Task: "Task 2", Value: "10" },
+//   { Phase: "Phase 2", Step: "Step 1", Task: "Task 2", Value: "10" },
+//   { Phase: "Phase 2", Step: "Step 1", Task: "Task 2", Value: "6" }
+// ];
+
+
+
+  // get table data
+  // import jquery from 'j'
+  // import {alasql} from src="{{ url_for('static', filename='alasql/alasql.js') }}";
+  $(function () { 
+    var table = $("#example1").DataTable({
+      "scrollY": 750,
+        "scrollX": true,
+        "drawCallback": function (settings) { 
+        // Here the response
+        var response = settings.json;
+        //console.log(response);
+    }});
+    // console.log(table);
+    var dataArray = table.rows().data()
+    console.log(dataArray, '<<dataArray')
+    let newData = []
+    // let feb = 0
+    // let jank04 = 0
+    // let jank05 = 0
+    let key
+    let flag = false
+    for (let i = 0 ; i < dataArray.length ; i ++){
+      //console.log(dataArray[i], '<<<>>>')
+      // if (dataArray[i][0] === 'Jan 2021' && dataArray[i][2] === 'K04GIR'){
+      //   jank04 ++
+      // }else if (dataArray[i][0] === 'Jan 2021' && dataArray[i][2] === 'K05GIR'){
+      //   jank05 ++
+      // }
+      
+      let obj = {
+        'date': dataArray[i][0],
+        'Key_GIR' : dataArray[i][2],
+        'count_key_GIR' : dataArray[i][3],
+        'File_Size' : dataArray[i][4]
+      }
+      newData.push(obj)
+    }
+    // console.log(feb, 'ini feb')
+    // console.log(jank04, 'ini jan')
+    console.log(newData, '<< newData')
+    // console.log(jank05, 'jan k05')
+    // months = dataArray.filter((dataArray,idx) => idx = 0)
+    // // console.log(months)
+    // var name = dataArray[0[0]];
+    let group = newData.reduce((r, a) => {
+      // console.log(a, 'A')
+      // console.log(r, 'R')
+      r[a.date] = [...r[a.date] || [], ...r[a.Key_GIR] || [], a]
+      // m[a.Key_GIR] = [...m[a.Key_GIR] || [], a]
+      return r
+    }, {})
+
+    console.log(group, '<<group')
+    var res = alasql(
+  "SELECT date, Key_GIR, SUM(CAST([count_key_GIR] AS INT)) AS [count_key_GIR],SUM(CAST([File_Size] AS INT)) AS [File_Size] \
+                  FROM ? GROUP BY date,Key_GIR ORDER BY date desc,Key_GIR asc",
+  [newData]
+);
+console.log(res, ">> res");
+
+
+
+
+
+let groupRES = res.reduce((r, a) => {
+      // console.log(a, 'A')
+      // console.log(r, 'R')
+      r[a.date] = [...r[a.date] || [], ...r[a.Key_GIR] || [], a]
+      // m[a.Key_GIR] = [...m[a.Key_GIR] || [], a]
+      return r
+    }, {})
+
+    console.log(groupRES, '<<groupRES')
+
+var dateOnly = alasql(
+  "SELECT DISTINCT(date) \
+                  FROM ? ",
+  [res]
+);
+console.log(dateOnly, "<<dateOnly");
+var cekQuerry = alasql(
+  "SELECT DISTINCT Key_GIR \
+                  FROM ? ORDER BY Key_GIR",
+  [res]
+);
+console.log(cekQuerry, "<<cekQuerry");
+var flags111 = [], outputDate111 = [], l = cekQuerry.length, i;
+for( i=0; i<l; i++) {
+    if( flags111[cekQuerry[i].Key_GIR]) continue;
+    flags111[cekQuerry[i].Key_GIR] = true;
+    outputDate111.push(cekQuerry[i].Key_GIR);
+}
+console.log(outputDate111, '<<cekQuerry22>>');
+  var details=
+{
+   "1":
+   {
+    date: "JAN 2021",
+    name:"K06GIR",
+    valuee:1,
+
+   },
+   "2":
+   {
+    date: "FEB 2021",
+      name:"K10GIR",
+      valuee:2,
+   },
+   "3":
+   {
+    date: "JAN 2021",
+      name:"K06GIR",
+      valuee:3,
+   }
+}
+console.log(details,'Valuecekname');
+var objectWithGroupByName = {};
+   for (var keys in details){
+      var date = details[keys].date;
+   if (!objectWithGroupByName[date]){
+      objectWithGroupByName[date] = [];
+   }
+   objectWithGroupByName[date].push(details[keys]);
+}
+console.log(objectWithGroupByName,'cekname');
+
+var output = res.reduce(function(o, cur) {
+
+// Get the index of the key-value pair.
+var occurs = o.reduce(function(n, item, i) {
+  return (item.Key_GIR === cur.Key_GIR) ? i : n;
+}, -1);
+// console.log(occurs,'occurs')
+// If the name is found,
+if (occurs >= 0) {
+
+  // append the current value to its list of values.
+  o[occurs].count_key_GIR = o[occurs].count_key_GIR.concat(cur.count_key_GIR);
+  console.log(o[occurs].count_key_GIR,'ceko[coccurs]')
+  // Otherwise,
+} else {
+
+  // add the current item to o (but make sure the value is an array).
+  var obj = {
+    Key_GIR: cur.Key_GIR,
+    count_key_GIR: [cur.count_key_GIR]
+  };
+  o = o.concat([obj]);
+}
+
+return o;
+}, []);
+
+console.log(output,'output');
+
+
+
+// console.log(cekName, 'coba append data')
+// addObject.forEach( obj1 => {
+//    if(!details.find( obj2 => obj2===obj1 ))
+//       details.push({name:obj1})
+// })
+// console.log(details);
+
+// var details = [{name:"John",data:"data"},{name:"David",data:"data"}]
+// console.log(details,'details1');
+// var addObject = ["Mike","Sam"];
+// var object3 = ["data","data"]
+// addObject.forEach( obj1 => {
+//    if(!details.find( obj2 => obj1===obj2 ))
+//       details.push({name:obj1,
+//                     data:object3})
+// })
+
+
+
+//   var cars = [{ make: 'audi', model: 'r8', year: '2012' }, { make: 'audi', model: 'rs5', year: '2013' }, { make: 'ford', model: 'mustang', year: '2012' }, { make: 'ford', model: 'fusion', year: '2015' }, { make: 'kia', model: 'optima', year: '2012' }],
+//     result = cars.reduce(function (r, a) {
+//         r[a.make] = r[a.make] || [];
+//         r[a.make].push(a);
+//         return r;
+//     }, Object.create(null));
+
+// console.log(result,'cekcontoh');
+// const object1 = {
+//   a: 'somestring',
+//   b: 42,
+//   c: false
+// };
+// for (let i = 0 ; i < dataArray.length ; i ++){
+//       //console.log(dataArray[i], '<<<>>>')
+//       // if (dataArray[i][0] === 'Jan 2021' && dataArray[i][2] === 'K04GIR'){
+//       //   jank04 ++
+//       // }else if (dataArray[i][0] === 'Jan 2021' && dataArray[i][2] === 'K05GIR'){
+//       //   jank05 ++
+//       // }
+      
+//       let obj = {
+//         'date': dataArray[i][0],
+//         'Key_GIR' : dataArray[i][2],
+//         'count_key_GIR' : dataArray[i][3],
+//         'File_Size' : dataArray[i][4]
+//       }
+//       newData.push(obj)
+//     }
+// let resultDate = res.map(a => a.date);
+var flags = [], outputDate = [], l = res.length, i;
+for( i=0; i<l; i++) {
+    if( flags[res[i].date]) continue;
+    flags[res[i].date] = true;
+    outputDate.push(res[i].date);
+}
+console.log(outputDate, '<<valuesDate>>');
+
+  var flagszero = [], outputKeyGir = [], l = res.length, i;
+for( i=0; i<l; i++) {
+    if( flagszero[res[i].Key_GIR]) continue;
+    flagszero[res[i].Key_GIR] = true;
+    outputKeyGir.push(res[i].Key_GIR);
+}
+console.log(outputKeyGir, '<<valuesKeyGir>>');
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+  var datasets = [];
+for (var i = 0; i < output.length; i++) {
+    var data = 
+        {
+        label: [output[i].Key_GIR],
+        data: output[i].count_key_GIR,
+        backgroundColor: getRandomColor(),
+    };
+    datasets.push(data);
+}
+console.log(datasets,'>>cekinchardatasets')
+//coba append data in res
+var dataMentah =  res;
+var keynya = outputDate111;
+// var datenya = outputDate;
+console.log(dataMentah,'dataMentah');
+console.log(keynya,'keynya');
+// console.log(datenya,'datenya');
+var datenya = ["Jan 2021","Feb 2021"]
+// datenya.forEach( date1 => {
+// 	if(!dataMentah.find( date2 => date2===date1 )) 
+
+//   {
+//   alert("found1");
+//   dataMentah.push(date1)
+// } else{
+//     alert("notfound2");
+// }
+// })
+dataCekk = []
+for (var i = 0; i <datenya.length;i> i++) {
+    var data =   Array.from(new Set(keynya), x => x+','+datenya[i] )
+
+        // {
+        // label: keynya[i],
+        // date : datenya[i],
+
+    // };
+
+    dataCekk.push(data);
+  }
+console.log(dataCekk, 'dataCekk')
+newArray =[]
+for (let i = 0 ; i < dataCekk.length ; i ++){
+      Array.prototype.push.apply(newArray,dataCekk[i])
+    }
+console.log(newArray, 'newArray')
+// var array1 = array1.concat(array2));
+const result11 = newArray.join(',');
+console.log(result11, 'result')
+const result22 = result11.split(',');
+console.log(result22, 'result')
+var chunksize = 2;
+
+
+var chunks = [];
+
+result22.forEach((item)=>{
+  if(!chunks.length || chunks[chunks.length-1].length == chunksize)
+  chunks.push([]);
+
+  chunks[chunks.length-1].push(item);
+});
+
+console.log(chunks, 'chunks');
+
+asd11 = []
+for (let i = 0 ; i < chunks.length ; i ++){
+      let obj2 = {
+        'date': chunks[i][1],
+        'Key_GIR' : chunks[i][0],
+        'count_key_GIR' : 0,
+        'File_Size' : 0
+      }
+      asd11.push(obj2)
+    }
+console.log(asd11, 'asd11');
+
+// var arrayCombined = (newArr.concat(dataMentah).sort(function(a,b) {
+
+
+// return (a.date > b.date) ?  1 : 
+//       ((a.date < b.date) ? -1 : 0);
+
+// })).sort(function(a,b) {
+
+// return (a.Key_GIR > b.Key_GIR) ?  1 : 
+//       ((a.Key_GIR < b.Key_GIR) ? -1 : 0);
+
+tes = []
+
+for(let i = 0; i < asd11.length; i++){
+  hitung = 0;
+  for(let j = 0; j < dataMentah.length; j++){
+    if((asd11[i].date == dataMentah[j].date) && (asd11[i].Key_GIR == dataMentah[j].Key_GIR)){
+      asd11[i].count_key_GIR = dataMentah[j].count_key_GIR
+      asd11[i].File_Size = dataMentah[j].File_Size
+    } 
+  }
+  // if(hitung > 0){
+  //   asd11[i].count_key_GIR = 
+  //   dataMentah.push(asd11[i])
+  // }
+}
+console.log(asd11, "TESORDER")
+var dataMentahArdi = asd11.reduce(function(o, cur) {
+
+// Get the index of the key-value pair.
+var occurs = o.reduce(function(n, item, i) {
+  return (item.Key_GIR === cur.Key_GIR) ? i : n;
+}, -1);
+// console.log(occurs,'occurs')
+// If the name is found,
+if (occurs >= 0) {
+
+  // append the current value to its list of values.
+  o[occurs].count_key_GIR = o[occurs].count_key_GIR.concat(cur.count_key_GIR);
+  console.log(o[occurs].count_key_GIR,'ceko[coccurs]')
+  // Otherwise,
+} else {
+
+  // add the current item to o (but make sure the value is an array).
+  var obj = {
+    Key_GIR: cur.Key_GIR,
+    count_key_GIR: [cur.count_key_GIR]
+  };
+  o = o.concat([obj]);
+}
+
+return o;
+}, []);
+console.log(dataMentahArdi, "semprong")
+var datasetsArdi = [];
+for (var i = 0; i < dataMentahArdi.length; i++) {
+    var data = 
+        {
+        label: [dataMentahArdi[i].Key_GIR],
+        data: dataMentahArdi[i].count_key_GIR,
+        backgroundColor: getRandomColor(),
+    };
+    datasetsArdi.push(data);
+}
+console.log(datasetsArdi,'datasetsArdi')
+console.log(datasets,'datasets')
+
+
+// });;
+// const obj3 = { ...asd11, ...dataMentah };
+const mergedArrayOfObj = {...asd11, ...dataMentah};
+console.log(mergedArrayOfObj, 'mergedArrayOfObj')
+
+
+// console.log(data12, 'data12')
+// var salary = [keynya[i]*datenya[i]]; 
+// console.log(salary, 'salary')
+// if(dataMentah.some(dataMentah => dataMentah.date === datenya)){
+//     alert("Object found inside the array.");
+// } else{
+//     alert("Object not found.");
+// }
+// console.log(dataMentah,'datamentahadd')
+
+// let dataSlicing = []
+// let objSlicing = {
+//         'date': dataArray[i][0],
+//         'Key_GIR' : dataArray[i][2],
+//         'count_key_GIR' : dataArray[i][3],
+//         'File_Size' : dataArray[i][4]
+//       }
+//       newData.push(objSlicing)
+//     }
+    // console.log(cekData, '><><>')
+    // let flag = false
+    // let februari = group['Feb 2021']
+    // for (let i = 0 ; i < februari.length + 1 ; i++){
+    //   februari[i].count_key_GIR = Number(februari[i].count_key_GIR)
+    //   if(februari[i].count_key_GIR === februari[i-1].count_key_GIR){
+    //     februari[i].count_key_GIR ++
+    //   }
+    //   console.log(februari[i], '<< februari di master')
+    // }
+    
+    // console.log(name)
+      let dataCek =['K06GIR','K10GIR','K04GIR']
+    var areaChartData = {
+      labels  : outputDate,
+      datasets : datasetsArdi
+      //  [
+      //   {
+      //     label               : dataCek.slice(0, 1),
+      //     backgroundColor     : 'rgba(60,141,188,0.9)',
+      //     borderColor         : 'rgba(60,141,188,0.8)',
+      //     pointRadius          : false,
+      //     pointColor          : '#3b8bba',
+      //     pointStrokeColor    : 'rgba(60,141,188,1)',
+      //     pointHighlightFill  : '#fff',
+      //     pointHighlightStroke: 'rgba(60,141,188,1)',
+      //     data                : [1, 2]
+      //   },
+      //   {
+      //     label               : dataCek.slice(1, 2),
+      //     backgroundColor     : 'rgba(210, 214, 222, 1)',
+      //     borderColor         : 'rgba(210, 214, 222, 1)',
+      //     pointRadius         : false,
+      //     pointColor          : 'rgba(210, 214, 222, 1)',
+      //     pointStrokeColor    : '#c1c7d1',
+      //     pointHighlightFill  : '#fff',
+      //     pointHighlightStroke: 'rgba(220,220,220,1)',
+      //     data                : [3, 4]
+      //   },
+      // ]
+    }
+    //-------------
+    //- BAR CHART -
+    //-------------
+
+    console.log(areaChartData,'areachartdata')
+    var barChartData = jQuery.extend(true, {}, areaChartData);
+    var temp0 = areaChartData.datasets[0];
+    var temp1 = areaChartData.datasets[1];
+
+    barChartData.datasets[0] = temp1;
+    barChartData.datasets[1] = temp0;
+    var barChartOptions = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      datasetFill             : false
+    };
+
+
+    // console.log(areaChartData1,'cekStrukturData')
+    //---------------------
+    //- STACKED BAR CHART -
+    //---------------------
+    var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
+    var stackedBarChartData = jQuery.extend(true, {}, barChartData)
+
+    var stackedBarChartOptions = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      scales: {
+        xAxes: [{
+          stacked: true,
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+      }
+    }
+    var stackedBarChart = new Chart(stackedBarChartCanvas, {
+      type: 'bar', 
+      data: stackedBarChartData,
+      options: stackedBarChartOptions
+    })
+  });
+
+
+  // var table1 = $('#example1').DataTable();
+  // console.log(table1.rows().data())
+//   let draw = false;
+
+//   // init();
+
+// /**
+//  * FUNCTIONS
+//  */
+
+// $(function init() {
+//   // initialize DataTables
+//   const table = $("#example1").DataTable({
+//       "scrollY": 750,
+//         "scrollX": true,
+//         "drawCallback": function (settings) {
+          
+//         // Here the response
+//         var response = settings.json;
+//         console.log(response);
+// }});
+//   const tableData = getTableData(table);
+//   console.log(table.rows().data())
+// }
+  
+// );
+ 
+  // get table data
+  // $(function () {
+  //   var table = $("#example1").DataTable({
+  //     "scrollY": 750,
+  //       "scrollX": true,
+  //       "drawCallback": function (settings) { 
+  //       // Here the response
+  //       var response = settings.json;
+  //       console.log(response);
+  //   }});
+  //   // console.log(table);
+  //   console.log(table.rows().data().length);
+    
+  //   console.log(table.rows().data())
+  // });
+  
+  // table = $("#example1").DataTable()
+  // console.log(table.rows().data().length);
+
+  // console.log($("#example1").DataTable().rows().data());
+  // console.log(table.rows().data().length);
+</script>
+
+<!-- <script>
+
+  let draw = false;
+  
+  init();
+  
+  /**
+   * FUNCTIONS
+   */
+  
+  function init() {
+    // initialize DataTables
+    const table = $("#example1").DataTable();
+    // get table data
+    const tableData = getTableData(table);
+
+    // create Highcharts
+    createHighcharts(tableData);
+    // table events
+    setTableEvents(table);
+  }
+  
+  function getTableData(table) {
+    const dataArray = [],
+      countryArray = [],
+      populationArray = [],
+      densityArray = [];
+  
+    // loop table rows
+    table.rows({ search: "applied" }).every(function() {
+      const data = this.data();
+      countryArray.push(data[0]);
+      populationArray.push(parseInt(data[1].replace(/\,/g, "")));
+      densityArray.push(parseInt(data[2].replace(/\,/g, "")));
+    });
+  
+    // store all data in dataArray
+    dataArray.push(countryArray, populationArray, densityArray);
+  
+    return dataArray;
+  }
+  
+  function createHighcharts(data) {
+    Highcharts.setOptions({
+      lang: {
+        thousandsSep: ","
+      }
+    });
+  
+    Highcharts.chart("chart", {
+      title: {
+        text: "DataTables to Highcharts"
+      },
+      subtitle: {
+        text: "Data from worldometers.info"
+      },
+      xAxis: [
+        {
+          categories: data[0],
+          labels: {
+            rotation: -45
+          }
+        }
+      ],
+      yAxis: [
+        {
+          // first yaxis
+          title: {
+            text: "Population (2017)"
+          }
+        },
+        {
+          // secondary yaxis
+          title: {
+            text: "Density (P/Km²)"
+          },
+          min: 0,
+          opposite: true
+        }
+      ],
+      series: [
+        {
+          name: "Population (2017)",
+          color: "#0071A7",
+          type: "column",
+          data: data[1],
+          tooltip: {
+            valueSuffix: " M"
+          }
+        },
+        {
+          name: "Density (P/Km²)",
+          color: "#FF404E",
+          type: "spline",
+          data: data[2],
+          yAxis: 1
+        }
+      ],
+      tooltip: {
+        shared: true
+      },
+      legend: {
+        backgroundColor: "#ececec",
+        shadow: true
+      },
+      credits: {
+        enabled: false
+      },
+      noData: {
+        style: {
+          fontSize: "16px"
+        }
+      }
+    });
+  }
+  
+  function setTableEvents(table) {
+    // listen for page clicks
+    table.on("page", () => {
+      draw = true;
+    });
+  
+    // listen for updates and adjust the chart accordingly
+    table.on("draw", () => {
+      if (draw) {
+        draw = false;
+      } else {
+        const tableData = getTableData(table);
+        createHighcharts(tableData);
+      }
+    });
+  }
+  
+  </script> -->
+
+  {% include 'footer.html' %}

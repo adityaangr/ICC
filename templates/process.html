@@ -1,0 +1,434 @@
+
+<script>
+  $(function () { 
+    $(document).ready(function() {
+    // Setup - add a text input to each footer cell
+    $('#example1 tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+    var table = $('#example1').DataTable({
+      "scrollY": 750,
+        "scrollX": true,
+        initComplete: function () {
+            // Apply the search
+            this.api().columns().every( function () {
+                var that = this;
+ 
+                $( 'input', this.footer() ).on( 'keyup change clear', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                  });
+            });
+        }
+    });
+
+    // $('#stackedBarChart').append('<canvas id="stackedBarChart"></canvas>');
+    var MasterData = table.rows().data()
+    console.log(MasterData, '<<MasterData>>')
+      // MAKE OBJECT ON MASTER DATA
+    let objData = []
+    for (let i = 0 ; i < MasterData.length ; i ++){
+
+      let obj = {
+        'PERIODE': MasterData[i][0],
+        'KEY_GIR' : MasterData[i][2],
+        'KEY_GIR_CODE' : MasterData[i][3],
+        'COUNT_KEY_GIR' : MasterData[i][4],
+        'FILE_SIZE' : MasterData[i][5]
+      }
+      objData.push(obj)
+    }
+
+    console.log(objData, '<< objData >>')
+    // GROUPING MASTER DATA
+    var groupingData = alasql(
+            "SELECT PERIODE, KEY_GIR, SUM(CAST([COUNT_KEY_GIR] AS INT)) AS [COUNT_KEY_GIR],SUM(CAST([FILE_SIZE] AS INT)) AS [FILE_SIZE] \
+                            FROM ? GROUP BY PERIODE,KEY_GIR ORDER BY PERIODE desc,KEY_GIR asc",
+            [objData]
+      );
+    console.log(groupingData, ">> groupingData");
+    // DUMMY PERIODE / DATE
+    var dateOnlyData = alasql(
+      "SELECT DISTINCT(PERIODE) \
+                      FROM ? ",
+      [groupingData]
+    );
+    console.log(dateOnlyData, " >> dateOnlyData");
+
+    // DUMMY KEY GIR
+    var kGirOnly = alasql(
+      "SELECT DISTINCT KEY_GIR \
+                      FROM ? ORDER BY KEY_GIR",
+      [groupingData]
+    );
+    console.log(kGirOnly, " >> kGirOnly");
+    
+    // GET COUNT KEY GIR,BUT WITH MISSING VALUE //
+    var countKeyGirRaw = groupingData.reduce(function(o, cur) {
+
+    // Get the index of the key-value pair.
+    var occurs = o.reduce(function(n, item, i) {
+      return (item.KEY_GIR === cur.KEY_GIR) ? i : n;
+    }, -1);
+
+    if (occurs >= 0) {
+
+      o[occurs].COUNT_KEY_GIR = o[occurs].COUNT_KEY_GIR.concat(cur.COUNT_KEY_GIR);
+      console.log(o[occurs].COUNT_KEY_GIR)
+    } else {
+
+      // add the current item to o (but make sure the value is an array).
+      var obj = {
+        KEY_GIR: cur.KEY_GIR,
+        COUNT_KEY_GIR: [cur.COUNT_KEY_GIR]
+      };
+      o = o.concat([obj]);
+    }
+    return o;
+    }, 
+    []);
+    console.log(countKeyGirRaw,'>> countKeyGirRaw');
+    // CREATE ARRAY WITH DUMMY DATE
+    var flagsDate = [], dummArrDate = [], l = groupingData.length, i;
+    for( i=0; i<l; i++) {
+        if( flagsDate[groupingData[i].PERIODE]) continue;
+        flagsDate[groupingData[i].PERIODE] = true;
+        dummArrDate.push(groupingData[i].PERIODE);
+    }
+    console.log(dummArrDate, '<<dummArrDate>>');
+    //CREATE ARRAY WITH DUMMY KEY GIR
+    var flagsKeyGir = [], dummArrKeyGir = [], l = groupingData.length, i;
+    for( i=0; i<l; i++) {
+        if( flagsKeyGir[groupingData[i].KEY_GIR]) continue;
+        flagsKeyGir[groupingData[i].KEY_GIR] = true;
+        dummArrKeyGir.push(groupingData[i].KEY_GIR);
+    }
+    console.log(dummArrKeyGir, '<<dummArrKeyGir>>');
+    
+    // CREATE KEY / DUMMY DATA AND KEY GIR FOR CROSCEK
+    dummyArrData = []
+    for (var i = 0; i <dummArrDate.length;i> i++) {
+          var data =   Array.from(new Set(dummArrKeyGir), x => x+','+dummArrDate[i] 
+          )
+          dummyArrData.push(data);
+    }
+    // KASAR
+    console.log(dummyArrData, 'dummyArrData')
+
+    dummyArrDataRaw =[]
+    for (let i = 0 ; i < dummyArrData.length ; i ++){
+      Array.prototype.push.apply(dummyArrDataRaw,dummyArrData[i])
+      }
+    console.log(dummyArrDataRaw, 'dummyArrDataRaw')
+      // ONE ARRAY AND SPLIT DATA
+    const dummyArrDataRawJoin = dummyArrDataRaw.join(',').split(',');
+    console.log(dummyArrDataRawJoin, 'dummyArrDataRawJoin')
+      // PARAMETER DUMMY ARRAY CREATED
+    var dummyArrCountSize = 2;
+    var dummyArrCount = [];
+
+    dummyArrDataRawJoin.forEach((item)=>{
+    if(!dummyArrCount.length || dummyArrCount[dummyArrCount.length-1].length == dummyArrCountSize)
+    dummyArrCount.push([]);
+
+    dummyArrCount[dummyArrCount.length-1].push(item);
+    
+    });
+
+    console.log(dummyArrCount, 'dummyArrCount');
+// PARAMETER DUMMY ARRAY CREATED AND FILLED ZERO VALUE FOR MISSING DATA
+dummyObjCount = []
+for (let i = 0 ; i < dummyArrCount.length ; i ++){
+      let obj2 = {
+        'PERIODE': dummyArrCount[i][1],
+        'KEY_GIR' : dummyArrCount[i][0],
+        'COUNT_KEY_GIR' : 0,
+      }
+      dummyObjCount.push(obj2);
+      for(let i = 0; i < dummyObjCount.length; i++){
+  for(let j = 0; j < groupingData.length; j++){
+    if((dummyObjCount[i].PERIODE == groupingData[j].PERIODE) && (dummyObjCount[i].KEY_GIR == groupingData[j].KEY_GIR)){
+      dummyObjCount[i].COUNT_KEY_GIR = groupingData[j].COUNT_KEY_GIR
+        } 
+      }
+    }
+    }
+console.log(dummyObjCount, 'dummyObjCount');
+    // PARAMETER DUMMY OBJECT SORTING BY PERIOD
+    var dummyObjCountPeriod = dummyObjCount.reduce(function(o, cur) {
+    // Get the index of the key-value pair.
+        var occurs = o.reduce(function(n, item, i) {
+          return (item.KEY_GIR === cur.KEY_GIR) ? i : n;
+        }, -1);
+        // If the name is found,
+        if (occurs >= 0) {
+          // append the current value to its list of values.
+          o[occurs].COUNT_KEY_GIR = o[occurs].COUNT_KEY_GIR.concat(cur.COUNT_KEY_GIR);
+        } else {
+          // add the current item to o (but make sure the value is an array).
+          var obj = {
+            KEY_GIR: cur.KEY_GIR,
+            COUNT_KEY_GIR: [cur.COUNT_KEY_GIR],
+          };
+          o = o.concat([obj]);
+        }
+        return o;
+    }, []);
+  console.log(dummyObjCountPeriod, "dummyObjCountPeriod")
+
+  // RANDOM COLOR FOR BACKGROUND COLOUR
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+var datasetsCountKeyGir = [];
+for (var i = 0; i < dummyObjCountPeriod.length; i++) {
+    var data_count_key_GIR = 
+        {
+        label: [dummyObjCountPeriod[i].KEY_GIR],
+        data: dummyObjCountPeriod[i].COUNT_KEY_GIR,
+        backgroundColor: getRandomColor(),
+        stack: "COUNT_KEY_GIR",
+    };
+    datasetsCountKeyGir.push(data_count_key_GIR);
+  }
+  console.log(datasetsCountKeyGir,'datasetsCountKeyGir')
+
+  var areaChartData = {
+      labels  : dummArrDate,
+      datasets : datasetsCountKeyGir
+
+    }
+    //-------------
+    //- BAR CHART -
+    //-------------
+    console.log(areaChartData,'areachartdata')
+    var barChartData = jQuery.extend(true, {}, areaChartData);
+    var temp0 = areaChartData.datasets[0];
+    var temp1 = areaChartData.datasets[1];
+
+    barChartData.datasets[0] = temp1;
+    barChartData.datasets[1] = temp0;
+    var barChartOptions =   {
+    plugins: {
+      title: {
+        display: true,
+        text: 'Chart.js Bar Chart - Stacked'
+      },
+    },
+    responsive: true,
+    interaction: {
+      intersect: false,
+    },
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true
+      }
+    }
+  }
+    //---------------------
+    //- STACKED BAR CHART -
+    //---------------------
+    var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
+    var stackedBarChartData = jQuery.extend(true, {}, barChartData)
+    var stackedBarChartOptions = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      scales: {
+        xAxes: [{
+          stacked: true,
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+      }
+    }
+    var stackedBarChart = new Chart(stackedBarChartCanvas, {
+      type: 'bar', 
+      data: stackedBarChartData,
+      options: stackedBarChartOptions
+    })
+    // GROUPING MASTER DATA TO WITH FILE SIZE / KEY GIR CODE / WIL / PENGIRIMAN
+    var groupingData_FileSize = alasql(
+            "SELECT PERIODE, KEY_GIR_CODE, SUM(CAST([COUNT_KEY_GIR] AS INT)) AS [COUNT_KEY_GIR],SUM(CAST([FILE_SIZE] AS INT)) AS [FILE_SIZE] \
+                            FROM ? WHERE KEY_GIR_CODE NOT LIKE 'None' GROUP BY PERIODE,KEY_GIR_CODE ORDER BY PERIODE desc,KEY_GIR_CODE asc",
+            [objData]
+      );
+    console.log(groupingData_FileSize, ">> groupingData_FileSize");
+
+    // DUMMY KEY GIR CODE
+    var kGirOnly_FileSize = alasql(
+      "SELECT DISTINCT KEY_GIR_CODE \
+                      FROM ? ORDER BY KEY_GIR_CODE",
+      [groupingData_FileSize]
+    );
+    console.log(kGirOnly_FileSize, " >> kGirCodeOnly");
+    // GET COUNT KEY GIR,BUT WITH MISSING VALUE //
+    var countKeyGirRaw_FileSize = groupingData_FileSize.reduce(function(o, cur) {
+
+    // Get the index of the key-value pair.
+    var occurs_FileSize= o.reduce(function(n, item, i) {
+      return (item.KEY_GIR_CODE === cur.KEY_GIR_CODE) ? i : n;
+    }, -1);
+
+    if (occurs_FileSize >= 0) {
+
+      o[occurs_FileSize].COUNT_KEY_GIR = o[occurs_FileSize].COUNT_KEY_GIR.concat(cur.COUNT_KEY_GIR);
+      console.log(o[occurs_FileSize].COUNT_KEY_GIR)
+    } else {
+
+      // add the current item to o (but make sure the value is an array).
+      var obj = {
+        KEY_GIR_CODE: cur.KEY_GIR_CODE,
+        COUNT_KEY_GIR: [cur.COUNT_KEY_GIR]
+      };
+      o = o.concat([obj]);
+    }
+    return o;
+    }, 
+    []);
+    console.log(countKeyGirRaw_FileSize,'>> countKeyGirRaw_FileSize');
+    // STEP DUMMY DATE AMBIL DARI PROSES ATASNYA
+    //CREATE ARRAY WITH DUMMY KEY GIR
+    var flagsKeyGir_FileSize = [], dummArrKeyGir_FileSize = [], l = groupingData_FileSize.length, i;
+    for( i=0; i<l; i++) {
+        if( flagsKeyGir[groupingData_FileSize[i].KEY_GIR_CODE]) continue;
+        flagsKeyGir[groupingData_FileSize[i].KEY_GIR_CODE] = true;
+        dummArrKeyGir_FileSize.push(groupingData_FileSize[i].KEY_GIR_CODE);
+    }
+    console.log(dummArrKeyGir_FileSize, '<<dummArrKeyGir_FileSize>>');
+      // CREATE KEY / DUMMY DATA AND KEY GIR FOR CROSCEK
+    dummyArrData_FileSize = []
+    for (var i = 0; i <dummArrDate.length;i> i++) {
+          var data =   Array.from(new Set(dummArrKeyGir_FileSize), x => x+','+dummArrDate[i] 
+          )
+          dummyArrData_FileSize.push(data);
+    }
+    // KASAR
+    console.log(dummyArrData_FileSize, 'dummyArrData_FileSize')
+    dummyArrDataRaw_FileSize =[]
+    for (let i = 0 ; i < dummyArrData_FileSize.length ; i ++){
+      Array.prototype.push.apply(dummyArrDataRaw_FileSize,dummyArrData_FileSize[i])
+      }
+    console.log(dummyArrDataRaw_FileSize, 'dummyArrDataRaw_FileSize')
+      // ONE ARRAY AND SPLIT DATA
+      const dummyArrDataRawJoin_FileSize = dummyArrDataRaw_FileSize.join(',').split(',');
+    console.log(dummyArrDataRawJoin_FileSize, 'dummyArrDataRawJoin_FileSize')
+    // PARAMETER DUMMY ARRAY CREATED
+    var dummyArrCountSize_FileSize = 2;
+    var dummyArrCount_FileSize = [];
+
+    dummyArrDataRawJoin_FileSize.forEach((item)=>{
+    if(!dummyArrCount_FileSize.length || dummyArrCount_FileSize[dummyArrCount_FileSize.length-1].length == dummyArrCountSize_FileSize)
+    dummyArrCount_FileSize.push([]);
+
+    dummyArrCount_FileSize[dummyArrCount_FileSize.length-1].push(item);
+    
+    });
+
+    console.log(dummyArrCount_FileSize, 'dummyArrCount_FileSize');
+    // PARAMETER DUMMY ARRAY CREATED AND FILLED ZERO VALUE FOR MISSING DATA
+    dummyObjCount_FileSize = []
+    for (let i = 0 ; i < dummyArrCount_FileSize.length ; i ++){
+          let obj2 = {
+            'PERIODE': dummyArrCount_FileSize[i][1],
+            'KEY_GIR_CODE' : dummyArrCount_FileSize[i][0],
+            'COUNT_KEY_GIR' : 0,
+          }
+          dummyObjCount_FileSize.push(obj2);
+          for(let i = 0; i < dummyObjCount_FileSize.length; i++){
+      for(let j = 0; j < groupingData_FileSize.length; j++){
+        if((dummyObjCount_FileSize[i].PERIODE == groupingData_FileSize[j].PERIODE) && (dummyObjCount_FileSize[i].KEY_GIR_CODE == groupingData_FileSize[j].KEY_GIR_CODE)){
+          dummyObjCount_FileSize[i].COUNT_KEY_GIR = groupingData_FileSize[j].COUNT_KEY_GIR
+            } 
+          }
+        }
+        }
+    console.log(dummyObjCount_FileSize, 'dummyObjCount_FileSize');
+    // PARAMETER DUMMY OBJECT SORTING BY PERIOD
+    var dummyObjCountPeriod_FileSize = dummyObjCount_FileSize.reduce(function(o, cur) {
+    // Get the index of the key-value pair.
+        var occurs = o.reduce(function(n, item, i) {
+          return (item.KEY_GIR_CODE === cur.KEY_GIR_CODE) ? i : n;
+        }, -1);
+        // If the name is found,
+        if (occurs >= 0) {
+          // append the current value to its list of values.
+          o[occurs].COUNT_KEY_GIR = o[occurs].COUNT_KEY_GIR.concat(cur.COUNT_KEY_GIR);
+        } else {
+          // add the current item to o (but make sure the value is an array).
+          var obj = {
+            KEY_GIR_CODE: cur.KEY_GIR_CODE,
+            COUNT_KEY_GIR: [cur.COUNT_KEY_GIR],
+          };
+          o = o.concat([obj]);
+        }
+        return o;
+    }, []);
+  console.log(dummyObjCountPeriod_FileSize, "dummyObjCountPeriod_FileSize")
+  var datasetsCountKeyGir_FileSize = [];
+for (var i = 0; i < dummyObjCountPeriod_FileSize.length; i++) {
+    var data_count_key_GIR_FileSize = 
+        {
+        label: [dummyObjCountPeriod_FileSize[i].KEY_GIR_CODE],
+        data: dummyObjCountPeriod_FileSize[i].COUNT_KEY_GIR,
+        backgroundColor: getRandomColor(),
+        stack: "FILE_SIZE",
+    };
+    datasetsCountKeyGir_FileSize.push(data_count_key_GIR_FileSize);
+  }
+  console.log(datasetsCountKeyGir_FileSize,'datasetsCountKeyGir_FileSize')
+  // new chart 
+  var areaChartDataFileSize = {
+      labels  : dummArrDate,
+      datasets : datasetsCountKeyGir_FileSize
+
+    }
+    //-------------
+    //- BAR CHART -
+    //-------------
+
+    console.log(areaChartDataFileSize,'areachartdata')
+    var barChartDataFileSize = jQuery.extend(true, {}, areaChartDataFileSize);
+    var temp0 = areaChartDataFileSize.datasets[0];
+    var temp1 = areaChartDataFileSize.datasets[1];
+
+    barChartDataFileSize.datasets[0] = temp1;
+    barChartDataFileSize.datasets[1] = temp0;
+
+    var stackedBarChartCanvas2 = $('#stackedBarChart2').get(0).getContext('2d')
+  var stackedBarChartData2 = jQuery.extend(true, {}, barChartDataFileSize)
+
+    var stackedBarChartOptions2 = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      scales: {
+        xAxes: [{
+          stacked: true,
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+      }
+    }
+    var stackedBarChart2 = new Chart(stackedBarChartCanvas2, {
+      type: 'bar', 
+      data: stackedBarChartData2,
+      options: stackedBarChartOptions2
+    })
+  
+  });
+  })
+</script>
